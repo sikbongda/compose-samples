@@ -16,7 +16,6 @@
 
 package com.example.compose.jetsurvey.survey
 
-import androidx.test.core.app.ApplicationProvider
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.google.common.truth.Truth
 import org.junit.Before
@@ -30,9 +29,7 @@ class SurveyViewModelTest {
 
     @Before
     fun setUp() {
-        viewModel = SurveyViewModel(
-            PhotoUriManager(ApplicationProvider.getApplicationContext())
-        )
+        viewModel = SurveyViewModel()
     }
 
     @Test

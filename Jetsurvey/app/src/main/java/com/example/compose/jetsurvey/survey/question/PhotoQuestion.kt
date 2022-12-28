@@ -17,7 +17,9 @@
 package com.example.compose.jetsurvey.survey.question
 
 import android.content.res.Configuration
-import android.net.Uri
+import android.graphics.Bitmap
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
@@ -58,14 +60,23 @@ import com.example.compose.jetsurvey.theme.JetsurveyTheme
 fun PhotoQuestion(
     modifier: Modifier = Modifier,
     @StringRes titleResourceId: Int,
-    imageUri: Uri?,
-    onClick: () -> Unit,
+    photoBitmap: Bitmap?,
+    onPhotoTaken: (Bitmap) -> Unit,
 ) {
-    val iconResource = if (imageUri != null) {
+    val iconResource = if (photoBitmap != null) {
         Icons.Filled.SwapHoriz
     } else {
         Icons.Filled.AddAPhoto
     }
+
+    val cameraLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.TakePicturePreview(),
+        onResult = { bitmap ->
+            bitmap?.let {
+                onPhotoTaken(it)
+            }
+        }
+    )
 
     QuestionWrapper(
         modifier = modifier,
@@ -73,15 +84,15 @@ fun PhotoQuestion(
     ) {
 
         OutlinedButton(
-            onClick = onClick,
+            onClick = { cameraLauncher.launch(null) },
             shape = MaterialTheme.shapes.small,
             contentPadding = PaddingValues()
         ) {
             Column {
-                if (imageUri != null) {
+                if (photoBitmap != null) {
                     AsyncImage(
                         model = ImageRequest.Builder(LocalContext.current)
-                            .data(imageUri)
+                            .data(photoBitmap)
                             .crossfade(true)
                             .build(),
                         contentDescription = null,
@@ -109,7 +120,7 @@ fun PhotoQuestion(
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = stringResource(
-                            id = if (imageUri != null) {
+                            id = if (photoBitmap != null) {
                                 R.string.retake_photo
                             } else {
                                 R.string.add_photo
@@ -148,8 +159,8 @@ fun PhotoQuestionPreview() {
             PhotoQuestion(
                 modifier = Modifier.padding(16.dp),
                 titleResourceId = R.string.selfie_skills,
-                imageUri = null,
-                onClick = {},
+                photoBitmap = null,
+                onPhotoTaken = {}
             )
         }
     }
