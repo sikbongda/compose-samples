@@ -133,7 +133,8 @@ fun SurveyRoute(
 
                 SurveyQuestion.TAKE_SELFIE -> TakeSelfieQuestion(
                     modifier = modifier,
-                    photoBitmap = viewModel.selfieBitmap,
+                    imageUri = viewModel.selfieUri,
+                    getNewImageUri = viewModel::getNewSelfieUri,
                     onPhotoTaken = { viewModel.onSelfieResponse(it) }
                 )
             }

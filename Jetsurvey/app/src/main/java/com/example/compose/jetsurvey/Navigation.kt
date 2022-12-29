@@ -17,6 +17,7 @@
 package com.example.compose.jetsurvey
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -37,6 +38,7 @@ import com.example.compose.jetsurvey.signinsignup.SignUpViewModelFactory
 import com.example.compose.jetsurvey.signinsignup.WelcomeScreen
 import com.example.compose.jetsurvey.signinsignup.WelcomeViewModel
 import com.example.compose.jetsurvey.signinsignup.WelcomeViewModelFactory
+import com.example.compose.jetsurvey.survey.PhotoUriManager
 import com.example.compose.jetsurvey.survey.SurveyResultScreen
 import com.example.compose.jetsurvey.survey.SurveyRoute
 import com.example.compose.jetsurvey.survey.SurveyViewModel
@@ -120,7 +122,7 @@ fun JetsurveyNavHost(
 
         composable(SURVEY_ROUTE) {
             val surveyViewModel: SurveyViewModel = viewModel(
-                factory = SurveyViewModelFactory()
+                factory = SurveyViewModelFactory(PhotoUriManager(LocalContext.current))
             )
             SurveyRoute(
                 viewModel = surveyViewModel,

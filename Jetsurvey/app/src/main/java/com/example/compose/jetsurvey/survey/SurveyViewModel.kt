@@ -16,7 +16,6 @@
 
 package com.example.compose.jetsurvey.survey
 
-import android.graphics.Bitmap
 import android.net.Uri
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
@@ -28,14 +27,16 @@ import com.example.compose.jetsurvey.survey.question.Superhero
 
 const val simpleDateFormatPattern = "EEE, MMM d"
 
-class SurveyViewModel : ViewModel() {
+class SurveyViewModel(
+    private val photoUriManager: PhotoUriManager
+) : ViewModel() {
 
     private val questionOrder: List<SurveyQuestion> = listOf(
         SurveyQuestion.FREE_TIME,
         SurveyQuestion.SUPERHERO,
         SurveyQuestion.LAST_TAKEAWAY,
         SurveyQuestion.FEELING_ABOUT_SELFIES,
-        SurveyQuestion.TAKE_SELFIE
+        SurveyQuestion.TAKE_SELFIE,
     )
 
     private var questionIndex = 0
@@ -61,9 +62,9 @@ class SurveyViewModel : ViewModel() {
     val feelingAboutSelfiesResponse: Float?
         get() = _feelingAboutSelfiesResponse.value
 
-    private val _selfieBitmap = mutableStateOf<Bitmap?>(null)
-    val selfieBitmap: Bitmap?
-        get() = _selfieBitmap.value
+    private val _selfieUri = mutableStateOf<Uri?>(null)
+    val selfieUri
+        get() = _selfieUri.value
 
     // ----- Survey status exposed as LiveData -----
 
@@ -140,17 +141,20 @@ class SurveyViewModel : ViewModel() {
         _isNextEnabled.value = getIsNextEnabled()
     }
 
-    fun onSelfieResponse(bitmap: Bitmap) {
-        _selfieBitmap.value = bitmap
+    fun onSelfieResponse(uri: Uri) {
+        _selfieUri.value = uri
         _isNextEnabled.value = getIsNextEnabled()
     }
+
+    fun getNewSelfieUri() = photoUriManager.buildNewUri()
+
     private fun getIsNextEnabled(): Boolean {
         return when (questionOrder[questionIndex]) {
             SurveyQuestion.FREE_TIME -> _freeTimeResponse.isNotEmpty()
             SurveyQuestion.SUPERHERO -> _superheroResponse.value != null
             SurveyQuestion.LAST_TAKEAWAY -> _takeawayResponse.value != null
             SurveyQuestion.FEELING_ABOUT_SELFIES -> _feelingAboutSelfiesResponse.value != null
-            SurveyQuestion.TAKE_SELFIE -> _selfieBitmap.value != null
+            SurveyQuestion.TAKE_SELFIE -> _selfieUri.value != null
         }
     }
 
@@ -165,11 +169,13 @@ class SurveyViewModel : ViewModel() {
     }
 }
 
-class SurveyViewModelFactory : ViewModelProvider.Factory {
+class SurveyViewModelFactory(
+    private val photoUriManager: PhotoUriManager
+) : ViewModelProvider.Factory {
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(SurveyViewModel::class.java)) {
-            return SurveyViewModel() as T
+            return SurveyViewModel(photoUriManager) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

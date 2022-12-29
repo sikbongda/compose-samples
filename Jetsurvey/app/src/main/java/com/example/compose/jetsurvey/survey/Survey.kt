@@ -16,7 +16,7 @@
 
 package com.example.compose.jetsurvey.survey
 
-import android.graphics.Bitmap
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.compose.jetsurvey.R
@@ -106,13 +106,15 @@ fun FeelingAboutSelfiesQuestion(
 @Composable
 fun TakeSelfieQuestion(
     modifier: Modifier = Modifier,
-    photoBitmap: Bitmap?,
-    onPhotoTaken: (Bitmap) -> Unit,
+    imageUri: Uri?,
+    getNewImageUri: () -> Uri,
+    onPhotoTaken: (Uri) -> Unit,
 ) {
     PhotoQuestion(
         modifier = modifier,
         titleResourceId = R.string.selfie_skills,
-        photoBitmap = photoBitmap,
+        imageUri = imageUri,
+        getNewImageUri = getNewImageUri,
         onPhotoTaken = onPhotoTaken,
     )
 }
