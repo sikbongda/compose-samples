@@ -18,7 +18,6 @@ package com.example.compose.jetsurvey.survey
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
 import androidx.core.content.FileProvider
 import java.io.File
 
@@ -31,7 +30,6 @@ class PhotoUriManager(private val appContext: Context) {
         val photosDir = File(appContext.cacheDir, PHOTOS_DIR)
         photosDir.mkdirs()
         val photoFile = File(photosDir, generateFilename())
-        Log.e("IAN", "File: " + photoFile.absolutePath)
         val authority = "${appContext.packageName}.$FILE_PROVIDER"
         return FileProvider.getUriForFile(appContext, authority, photoFile)
     }
